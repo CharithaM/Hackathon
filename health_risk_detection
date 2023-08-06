@@ -1,0 +1,71 @@
+
+pip install playsound
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import warnings
+warnings.filterwarnings("ignore")
+
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+from playsound import playsound
+from IPython.display import Audio
+
+df = pd.read_csv("/content/drive/MyDrive/datasets/heart_d .csv")
+age = 0
+hr = 0
+pred1 = 1
+pred2 = 1
+
+class hrp():
+  def __init__(self, age, hr):
+    self.age = age
+    self.hr = hr
+    pred1 = 1
+    pred2 = 1
+  def min_func(self):
+    Xmn = df[['age',	'hear_rate']]
+    ymn = df['min_trigger']
+    Xn_train, Xn_test, yn_train, yn_test = train_test_split(Xmn, ymn, test_size = 0.2, random_state = 0)
+    lr_model = LogisticRegression(random_state = 0, penalty = 'l2')
+    lr_model.fit(Xn_train, yn_train)
+    yn_pred_lr = lr_model.predict(Xn_test)
+    inp = [age, hr]
+    inp = np.array(inp)
+    pred1 = lr_model.predict(inp.reshape(-1, 2))
+    print("Min trigger = ", pred1)
+    return pred1
+  def max_func(self):
+    Xmx = df[['age',	'hear_rate']]
+    ymx = df['max_trigger']
+    Xm_train, Xm_test, ym_train, ym_test = train_test_split(Xmx, ymx, test_size = 0.2, random_state = 0)
+    lr_model = LogisticRegression(random_state = 0, penalty = 'l2')
+    lr_model.fit(Xm_train, ym_train)
+    ym_pred_lr = lr_model.predict(Xm_test)
+    inp = [age, hr]
+    inp = np.array(inp)
+    pred2 = lr_model.predict(inp.reshape(-1, 2))
+    print("Max trigger = ", pred2)
+    return pred2
+  def alrt(self):
+    pred1 = self.min_func()
+    pred2 = self.max_func()
+    wn1 = Audio('/content/emergency-alarm-with-reverb-29431_XwnSZ0oo.mp3', autoplay=True)
+    wn2 = Audio('/content/beep-warning-6387.mp3', autoplay=True)
+    if pred1 == 0:
+      display(wn1)
+      print("min trigger")
+    elif pred0 == 0 and pred1 != 0:
+      display(wn2)
+      print("max trigger")
+    else:
+      print("Normal")
+age1 = input("Enter age: ")
+hr1 = input("Enter heartrate: ")
+obj1 = hrp(age1, hr1)
+
+obj1.alrt()
